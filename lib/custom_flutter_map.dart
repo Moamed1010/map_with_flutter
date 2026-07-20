@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart'; 
+import 'package:latlong2/latlong.dart';
 
 class CustomFlutterMap extends StatefulWidget {
   const CustomFlutterMap({super.key});
@@ -10,14 +10,21 @@ class CustomFlutterMap extends StatefulWidget {
 }
 
 class _CustomFlutterMapState extends State<CustomFlutterMap> {
-  // تعريف الـ Controller الخاص بـ flutter_map
   final MapController mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    initMarkers();  
+  }
 
   @override
   void dispose() {
     mapController.dispose();
     super.dispose();
   }
+
+  List<Marker> markers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +40,13 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
                 initialZoom: 12.0,
               ),
               children: [
-                // الخريطة العادية الملونة (بدون Dark Mode)
+                // 1. الخريطة العادية لازم تكون هي أول طبقة عشان تترسم تحت
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.google_map',
                 ),
+                // 2. طبقة الماركرز تيجي بعدها عشان تترسم فوق الخريطة
+                MarkerLayer(markers: markers),
               ],
             ),
             Positioned(
@@ -49,7 +58,7 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
                   // تغيير المكان
                   mapController.move(
                     const LatLng(30.014122802689872, 31.217029950766122),
-                    6.0,
+                    15,
                   );
                 },
                 child: const Text('Change Location'),
@@ -59,5 +68,13 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
         ),
       ),
     );
+  }
+
+  void initMarkers() {
+    var myMarker = Marker(
+      child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
+      point: const LatLng(31.21440, 30.01772),
+    );
+    markers.add(myMarker);
   }
 }

@@ -70,16 +70,41 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
       ),
     );
   }
+void initMarkers() {
+    var myMarker = places.map((place) {
+      return Marker(
+        width: 60,
+        height: 60,
+        point: place.location,
+        child: GestureDetector(
+          onTap: () {
+        
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (context) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  height: 150,
+                  width: double.infinity,
+                  child: Text(
+                    place.name , 
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                );
+              },
+            );
+          },
+          child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
+        ),
+      );
+    }).toList();
 
-  void initMarkers() {
-    var myMarker = places
-        .map(
-          (place) => Marker(
-            child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
-            point: place.location,
-          ),
-        )
-        .toList();
-    markers.addAll(myMarker);
+    // يفضل تحطها جوه setState عشان لو الداتا اتحدثت بعدين الخريطة تحس بيها
+    setState(() {
+      markers.addAll(myMarker);
+    });
   }
 }

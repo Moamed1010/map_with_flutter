@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_example/palce_model.dart';
 import 'package:latlong2/latlong.dart';
 
 class CustomFlutterMap extends StatefulWidget {
@@ -15,7 +16,7 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
   @override
   void initState() {
     super.initState();
-    initMarkers();  
+    initMarkers();
   }
 
   @override
@@ -36,13 +37,13 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
               mapController: mapController,
               options: const MapOptions(
                 // الكاميرا الافتراضية
-                initialCenter: LatLng(31.21440, 30.01772),
+                initialCenter: LatLng(30.038194132241735, 31.211486561187183),
                 initialZoom: 12.0,
               ),
               children: [
                 // 1. الخريطة العادية لازم تكون هي أول طبقة عشان تترسم تحت
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
                   userAgentPackageName: 'com.example.google_map',
                 ),
                 // 2. طبقة الماركرز تيجي بعدها عشان تترسم فوق الخريطة
@@ -57,7 +58,7 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
                 onPressed: () {
                   // تغيير المكان
                   mapController.move(
-                    const LatLng(30.014122802689872, 31.217029950766122),
+                    const LatLng(30.02394817324914, 31.216079998252123),
                     15,
                   );
                 },
@@ -71,10 +72,14 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
   }
 
   void initMarkers() {
-    var myMarker = Marker(
-      child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
-      point: const LatLng(31.21440, 30.01772),
-    );
-    markers.add(myMarker);
+    var myMarker = places
+        .map(
+          (place) => Marker(
+            child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
+            point: place.location,
+          ),
+        )
+        .toList();
+    markers.addAll(myMarker);
   }
 }

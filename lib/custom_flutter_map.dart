@@ -26,59 +26,59 @@ class _CustomFlutterMapState extends State<CustomFlutterMap> {
   }
 
   List<Marker> markers = [];
+  List<LatLng> points = [
+    places[0].location,
+    places[1].location,
+    places[2].location,
+    places[0].location
+  ];
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Stack(
+        body: FlutterMap(
+          mapController: mapController,
+          options: const MapOptions(
+            // الكاميرا الافتراضية
+            initialCenter: LatLng(30.038194132241735, 31.211486561187183),
+            initialZoom: 15,
+          ),
           children: [
-            FlutterMap(
-              mapController: mapController,
-              options: const MapOptions(
-                // الكاميرا الافتراضية
-                initialCenter: LatLng(30.038194132241735, 31.211486561187183),
-                initialZoom: 12.0,
-              ),
-              children: [
-                // 1. الخريطة العادية لازم تكون هي أول طبقة عشان تترسم تحت
-                TileLayer(
-                  urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-                  userAgentPackageName: 'com.example.google_map',
-                ),
-                // 2. طبقة الماركرز تيجي بعدها عشان تترسم فوق الخريطة
-                MarkerLayer(markers: markers),
-              ],
+         
+            TileLayer(
+              urlTemplate:
+                  'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+              userAgentPackageName: 'com.example.google_map',
             ),
-            Positioned(
-              bottom: 16,
-              left: 50,
-              right: 60,
-              child: ElevatedButton(
-                onPressed: () {
-                  // تغيير المكان
-                  mapController.move(
-                    const LatLng(30.02394817324914, 31.216079998252123),
-                    15,
-                  );
-                },
-                child: const Text('Change Location'),
-              ),
-            ),
+            _buildPolylineLayer(points),
+            // 2. طبقة الماركرز تيجي بعدها عشان تترسم فوق الخريطة
+            MarkerLayer(markers: markers),
           ],
         ),
       ),
     );
   }
-void initMarkers() {
+
+Widget _buildPolylineLayer(List<LatLng> points) {
+    return PolylineLayer(
+      polylines: [
+        Polyline(
+          points: points,
+          strokeWidth: 4.0,
+          color: Colors.blueAccent,
+        ),
+      ],
+    );
+  }
+  void initMarkers() {
     var myMarker = places.map((place) {
       return Marker(
-        width: 60,
-        height: 60,
+        width: 30,
+        height: 30,
         point: place.location,
         child: GestureDetector(
           onTap: () {
-        
             showModalBottomSheet(
               context: context,
               shape: const RoundedRectangleBorder(
@@ -90,8 +90,11 @@ void initMarkers() {
                   height: 150,
                   width: double.infinity,
                   child: Text(
-                    place.name , 
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    place.name,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 );
               },
